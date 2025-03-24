@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Salon Admin Panel</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+
+<body class="bg-gray-100">
+    <!-- Sidebar -->
+    <div class="flex">
+        <aside class="w-64 h-screen bg-gray-900 text-white p-5">
+            <h2 class="text-xl font-bold">Admin Dashboard</h2>
+            <nav class="mt-5">
+                <ul>
+                    <!-- <li class="mb-3"><a href="#" class="hover:text-yellow-400">Dashboard</a></li> -->
+                    <li class="mb-3"><a href="#" class="hover:text-yellow-400">Appointments</a></li>
+                    <!-- <li class="mb-3"><a href="#" class="hover:text-yellow-400">Clients</a></li>
+                    <li class="mb-3"><a href="#" class="hover:text-yellow-400">Settings</a></li> -->
+                </ul>
+            </nav>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="flex-1 p-6">
+            <h1 class="text-2xl font-bold mb-4">Dashboard</h1>
+
+            <!-- Dashboard Stats -->
+            <div class="grid grid-cols-3 gap-4 mb-6">
+                <div class="bg-white p-6 shadow-md rounded-lg text-center">
+                    <h2 class="text-xl font-bold">Total Appointments</h2>
+                    <p class="text-3xl font-bold text-yellow-500" id="totalAppointments"></p>
+                </div>
+                <!-- <div class="bg-white p-6 shadow-md rounded-lg text-center">
+                    <h2 class="text-xl font-bold">Clients</h2>
+                    <p class="text-3xl font-bold text-green-500">24</p>
+                </div>
+                <div class="bg-white p-6 shadow-md rounded-lg text-center">
+                    <h2 class="text-xl font-bold">Revenue</h2>
+                    <p class="text-3xl font-bold text-blue-500">$2,340</p>
+                </div> -->
+            </div>
+
+            <!-- Appointments Table -->
+            <h2 class="text-xl font-bold mb-4">Appointments</h2>
+            <table class="min-w-full bg-white shadow-md rounded-lg">
+                <thead>
+                    <tr class="bg-gray-200">
+                        <th class="p-2 border border-gray-700">Client Name</th>
+                        <th class="p-2 border border-gray-700">Contact</th>
+                        <th class="p-2 border border-gray-700">Service</th>
+                        <th class="p-2 border border-gray-700">Date</th>
+                        <th class="p-2 border border-gray-700">Time</th>
+
+
+                    </tr>
+                </thead>
+                <tbody id="appointmentTable">
+                    <!-- Data will be inserted here -->
+                </tbody>
+            </table>
+
+            <div class="flex justify-between p-5 ">
+
+                <a href="/api/logout" id="logoutButton"
+                    class="bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 rounded">
+                    Logout
+                </a>
+            </div>
+        </main>
+
+    </div>
+
+    <script>
+        // Mock data for appointments
+        async function fetchAppointments() {
+            try {
+
+                const response = await fetch("http://127.0.0.1:5000/api/appointments");
+                const appointments = await response.json();
+                document.getElementById("totalAppointments").innerHTML = appointments.length;
+                // console.log(appointments)    
+                const tableBody = document.getElementById("appointmentTable");
+                tableBody.innerHTML = "";
+
+                appointments.forEach((appointment) => {
+                    const row = document.createElement("tr");
+
+                    row.innerHTML = `
+                <td class="p-2 border border-gray-700">${appointment.name}</td>
+                <td class="p-2 border border-gray-700">${appointment.contact}</td>
+                <td class="p-2 border border-gray-700">${appointment.service}</td>
+                <td class="p-2 border border-gray-700">${new Date(appointment.date).toLocaleDateString()}</td>
+                <td class="p-2 border border-gray-700">${appointment.time}</td>
+                
+            `;
+
+                    tableBody.appendChild(row);
+                });
+
+
+            } catch (error) {
+                console.error("Error fetching appointments:", error);
+            }
+        }
+
+
+
+
+
+
+
+
+
+
+
+        // ✅ Call `fetchStatuses` when the page loads
+
+
+
+
+
+
+
+
+
+
+        // Format date from "YYYY-MM-DD" to "DD/MM/YYYY"
+        function formatDate(dateString) {
+            const date = new Date(dateString);
+            return date.toLocaleDateString("en-GB"); // Converts to "DD/MM/YYYY"
+        }
+
+        document.getElementById("logoutButton").addEventListener("click", async () => {
+            try {
+                const response = await fetch("/api/logout", {
+                    method: "POST",
+                    credentials: "include" // Ensure session cookies are handled properly
+                });
+
+                const result = await response.json();
+
+                if (result.success) {
+                    alert("Logged out successfully!");
+                    window.location.href = "/"; // Redirect to index.html after logout
+                } else {
+                    alert("Logout failed. Please try again.");
+                }
+            } catch (error) {
+                console.error("Logout error:", error);
+                alert("An error occurred during logout.");
+            }
+        });
+
+
+        // Call function when the page loads
+        document.addEventListener("DOMContentLoaded", fetchAppointments);
+
+    </script>
+
+</body>
+
+</html>
