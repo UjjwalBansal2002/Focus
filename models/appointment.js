@@ -8,4 +8,4 @@ const bookAppointmentSchema = new mongoose.Schema({
     time: { type: String, required: true }
 }, { timestamps: true });
 
-module.exports = mongoose.model("Appointment", bookAppointmentSchema);
+module.exports = mongoose.model("appointment", bookAppointmentSchema);

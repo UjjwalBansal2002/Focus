@@ -1,4 +1,4 @@
-const Appointment = require("../models/Appointment");
+const Appointment = require("../models/appointment");
 
 
 // ✅ Create a new appointment
