@@ -78,7 +78,7 @@
         async function fetchAppointments() {
             try {
 
-                const response = await fetch("http://127.0.0.1:5000/api/appointments");
+                const response = await fetch("/api/appointments");
                 const appointments = await response.json();
                 document.getElementById("totalAppointments").innerHTML = appointments.length;
                 // console.log(appointments)    
