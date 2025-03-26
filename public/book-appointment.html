@@ -27,7 +27,7 @@
 
 
 
-            
+
 
             <form id="appointmentForm" action="http://127.0.0.1:5000/api/appointments" method="POST"
                 class="bg-gray-800 p-6 rounded-lg shadow-lg">
@@ -85,7 +85,8 @@
     </div>
 
     <!-- Confirmation Modal -->
-    <div id="confirmationModal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex flex-col  items-center justify-center">
+    <div id="confirmationModal"
+        class="hidden fixed inset-0 bg-black bg-opacity-50 flex flex-col  items-center justify-center">
         <div class="bg-gray-800 p-6 rounded-lg shadow-lg w-80 text-center">
             <h2 class="text-xl font-bold text-yellow-400 mb-4">Appointment Confirmed!</h2>
             <p>Your appointment has been successfully booked.</p>
@@ -95,17 +96,15 @@
             </button>
         </div>
         <div class="flex justify-between p-5 ">
-    
-            <a href="/" id="logoutButton"
-                class="bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 rounded">
+
+            <a href="/" id="logoutButton" class="bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 rounded">
                 Go to Home
             </a>
         </div>
     </div>
     <div class="flex justify-between p-5 ">
-    
-        <a href="/" id="logoutButton"
-            class="bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 rounded">
+
+        <a href="/" id="logoutButton" class="bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 rounded">
             Go to Home
         </a>
     </div>
@@ -169,6 +168,15 @@
 
                 console.error("Error:", error);
                 alert("Something went wrong. Please try again.");
+            }
+        });
+
+
+        document.addEventListener("DOMContentLoaded", () => {
+            const client = sessionStorage.getItem("client");
+            if (!client) {
+                alert("Please log in to book an appointment.");
+                window.location.href = "client-login.html";
             }
         });
     </script>

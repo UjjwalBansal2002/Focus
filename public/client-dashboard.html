@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Client Dashboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+
+<body class="bg-gray-900 text-white min-h-screen flex flex-col items-center justify-center">
+
+    <!-- Dashboard Header -->
+    <div class="w-full max-w-4xl p-8">
+        <h1 class="text-3xl font-bold mb-4">Welcome, <span id="client-name">Client</span>!</h1>
+
+        <!-- Logout Button -->
+        <button onclick="logoutClient()"
+            class="bg-yellow-500 hover:bg-yellow-600 text-black font-bold py-2 px-4 rounded transition mb-8">
+            Logout
+        </button>
+
+        <!-- Appointment List -->
+        <h2 class="text-2xl mb-4">Your Previous Appointments</h2>
+
+        <div id="appointment-list" class="space-y-4">
+            <!-- Appointments will be dynamically inserted here -->
+        </div>
+
+    </div>
+
+    <script>
+        // Check if Client is Logged In
+        document.addEventListener("DOMContentLoaded", async () => {
+            const clientData = sessionStorage.getItem("client");
+            if (!clientData) {
+                alert("Please log in to access your dashboard.");
+                window.location.href = "client-login.html";
+                return;
+            }
+
+            const client = JSON.parse(clientData);
+            document.getElementById("client-name").textContent = client.name;
+
+            // Fetch Client's Appointments
+            try {
+                const response = await fetch(`http://127.0.0.1:5000/api/client/appointments/${client.contact}`, {
+                    method: "GET",
+                    headers: { "Content-Type": "application/json" },
+                });
+
+                const appointments = await response.json();
+                if (response.ok) {
+                    displayAppointments(appointments);
+                } else {
+                    alert("Error fetching appointments: " + appointments.message);
+                }
+            } catch (error) {
+                console.error("Error fetching appointments:", error);
+            }
+        });
+
+        // Display Appointments
+        function displayAppointments(appointments) {
+            const appointmentList = document.getElementById("appointment-list");
+            if (appointments.length === 0) {
+                appointmentList.innerHTML = "<p>No previous appointments found.</p>";
+                return;
+            }
+
+            appointmentList.innerHTML = appointments.map(appointment => `
+                <div class="p-4 border border-yellow-500 rounded-lg">
+                    <p><strong>Date:</strong> ${new Date(appointment.date).toLocaleDateString()}</p>
+                    <p><strong>Time:</strong> ${appointment.time}</p>
+                    <p><strong>Service:</strong> ${appointment.service}</p>
+                    <p><strong>Status:</strong> ${appointment.status}</p>
+                </div>
+            `).join("");
+        }
+
+        // Logout Function
+        function logoutClient() {
+            sessionStorage.removeItem("client");
+            alert("You have been logged out successfully.");
+            window.location.href = "index.html";
+        }
+        document.addEventListener("DOMContentLoaded", async () => {
+            const client = JSON.parse(sessionStorage.getItem("client"));
+            if (!client) {
+                window.location.href = "client-login.html";
+            }
+
+            try {
+                const response = await fetch(`/api/appointments?email=${client.email}`);
+                const appointments = await response.json();
+
+                const appointmentList = document.getElementById("appointment-list");
+                appointmentList.innerHTML = appointments.map(app => `
+            <div class="p-4 border-b border-gray-300">
+                <p><strong>Date:</strong> ${app.date}</p>
+                <p><strong>Service:</strong> ${app.service}</p>
+                <p><strong>Status:</strong> ${app.status}</p>
+            </div>
+        `).join("");
+            } catch (error) {
+                console.error("Error fetching appointments:", error);
+            }
+        });
+
+    </script>
+
+</body>
+
+</html>

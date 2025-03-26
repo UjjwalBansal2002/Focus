@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Client Registration - Focus Hair Studio</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+
+<body class="flex items-center justify-center h-screen bg-gray-900 text-white">
+
+    <!-- Registration Form -->
+    <div class="bg-gray-800 p-8 rounded-lg shadow-lg max-w-md w-full">
+        <h2 class="text-3xl font-bold text-center mb-8">Client Registration</h2>
+
+        <form id="registerForm">
+            <div class="mb-6">
+                <label for="name" class="block text-gray-400 mb-2">Full Name</label>
+                <input type="text" id="name" name="name" required
+                    class="w-full px-4 py-2 rounded bg-gray-700 text-white focus:outline-none focus:ring-2 focus:ring-yellow-500">
+            </div>
+
+            <div class="mb-6">
+                <label for="email" class="block text-gray-400 mb-2">Email Address</label>
+                <input type="email" id="email" name="email" required
+                    class="w-full px-4 py-2 rounded bg-gray-700 text-white focus:outline-none focus:ring-2 focus:ring-yellow-500">
+            </div>
+            <div class="mb-4">
+                <label for="contact" class="block text-gray-400 mb-1">Contact Number</label>
+                <input type="text" id="contact" name="contact" required
+                    class="w-full p-2 rounded bg-gray-700 text-white focus:outline-none focus:ring-2 focus:ring-yellow-500">
+            </div>
+
+
+            <div class="mb-6">
+                <label for="password" class="block text-gray-400 mb-2">Password</label>
+                <input type="password" id="password" name="password" required
+                    class="w-full px-4 py-2 rounded bg-gray-700 text-white focus:outline-none focus:ring-2 focus:ring-yellow-500">
+            </div>
+
+            <button type="submit"
+                class="w-full bg-yellow-500 hover:bg-yellow-600 text-black font-bold py-2 px-4 rounded transition">Register</button>
+        </form>
+
+        <p class="mt-6 text-center">
+            Already registered? <a href="client-login.html" class="text-yellow-400 hover:underline">Login here</a>
+        </p>
+    </div>
+
+    <script>
+        document.getElementById("registerForm").addEventListener("submit", async function (event) {
+            event.preventDefault();
+
+            const name = document.getElementById("name").value;
+            const email = document.getElementById("email").value;
+            const password = document.getElementById("password").value;
+            const contact = document.getElementById("contact").value;
+
+            try {
+                const response = await fetch("/api/client/register", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ name, email, password, contact })
+                });
+
+                const result = await response.json();
+                // console.log(result)
+                if (result.success) {
+                    alert("Registration successful! Please log in.");
+                    sessionStorage.setItem("client", JSON.stringify({ name: result.name, email: result.email }));
+                    window.location.href = "index.html";
+                    // window.location.href = "book-appointment.html";
+                    // window.location.href = "client-login.html";
+                } else {
+                    alert(result.message || "Registration failed. Try again.");
+                }
+            } catch (error) {
+                alert("Error during registration. Try again later.");
+                console.error("Error:", error);
+            }
+        });
+    </script>
+
+</body>
+
+</html>

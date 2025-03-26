@@ -25,15 +25,26 @@
     <link rel="stylesheet" href="assets/css/nice-select.css">
     <link rel="stylesheet" href="assets/css/style.css">
     <style>
-        .focus-logo-div{
+        .focus-logo-div {
             width: 20vw;
         }
-        .focus-logo-img{
+
+        .focus-logo-img {
             width: 100px;
             height: 100px;
             object-fit: contain;
         }
 
+        /* Utility Class to Hide Elements */
+        .hidden {
+            display: none;
+        }
+
+        /* Mobile Menu Styling */
+        .mobile_menu {
+            display: flex;
+            justify-content: flex-end;
+        }
     </style>
 </head>
 
@@ -52,21 +63,26 @@
     <!-- Preloader Start -->
     <header>
         <!--? Header Start -->
-        <div class="header-area header-transparent " >
-            <div class="main-header header-sticky"  >
-                <div class="container-fluid"style="border-bottom:2px solid #d19f68" >
+        <div class="header-area header-transparent">
+            <div class="main-header header-sticky">
+                <div class="container-fluid" style="border-bottom:2px solid #d19f68">
                     <div class="row flex items-center align-items-center">
+
                         <!-- Logo -->
                         <div class="col-xl-2 col-lg-2 col-md-1">
                             <div class="focus-logo-div">
                                 <a href="index.html">
-                                    <img src="assets/img/logo/Focus Logo for black.png" alt="Logo" class="focus-logo-img">
+                                    <img src="assets/img/logo/Focus Logo for black.png" alt="Logo"
+                                        class="focus-logo-img">
                                 </a>
                             </div>
                         </div>
+
+                        <!-- Main Menu -->
                         <div class="col-xl-10 col-lg-10 col-md-10">
                             <div class="menu-main d-flex align-items-center justify-content-end">
-                                <!-- Main-menu -->
+
+                                <!-- Navigation Links -->
                                 <div class="main-menu f-right d-none d-lg-block">
                                     <nav>
                                         <ul id="navigation">
@@ -78,17 +94,36 @@
                                         </ul>
                                     </nav>
                                 </div>
-                                <div class="header-right-btn f-right d-none d-lg-block ml-30">
-                                    <a href="book-appointment.html" class="btn header-btn">Book An Appointment</a>
-                                    <a href="admin-login" class="btn header-btn">Admin Login</a>
-                                    
+
+                                <!-- Buttons Section -->
+                                <div class="header-right-btn f-right d-none d-lg-block ml-30" id="auth-buttons">
+
+                                    <a href="client-login.html" id="client-login-btn" class="btn header-btn">Client
+                                        Login</a>
+                                    <a href="#" onclick="checkAuth()" id="book-appointment-btn"
+                                        class="btn header-btn hidden">Book An Appointment</a>
+                                    <a href="#" onclick="logout()" id="logout-btn"
+                                        class="btn header-btn hidden">Logout</a>
+
+                                    <a href="admin-login.html" id="admin-login-btn" class="btn header-btn">Admin
+                                        Login</a>
+                                    <!-- My Appointments Button (Hidden if Not Logged In) -->
+                                    <a href="client-dashboard.html" id="client-dashboard-btn"
+                                        class="btn header-btn hidden">My Appointments</a>
+
+                                    <!-- Logout Button (Hidden if Not Logged In) -->
+                                    <button onclick="logoutClient()" id="logout-btn"
+                                        class="btn header-btn hidden">Logout</button>
                                 </div>
+
                             </div>
                         </div>
-                        <!-- Mobile Menu -->
+
+                        <!-- Mobile Menu (Hamburger for Small Screens) -->
                         <div class="col-12">
                             <div class="mobile_menu d-block d-lg-none"></div>
                         </div>
+
                     </div>
                 </div>
             </div>
@@ -105,7 +140,7 @@
                         <div class="row">
                             <div class="col-xl-8 col-lg-9 col-md-11 col-sm-10">
                                 <div class="hero__caption">
-                                    <span data-animation="fadeInUp" data-delay="0.2s">with patrick potter</span>
+                                    <!-- <span data-animation="fadeInUp" data-delay="0.2s">with patrick potter</span> -->
                                     <h1 data-animation="fadeInUp" data-delay="0.5s">Focus Hair Studio</h1>
                                 </div>
                             </div>
@@ -118,7 +153,7 @@
                         <div class="row">
                             <div class="col-xl-8 col-lg-9 col-md-11 col-sm-10">
                                 <div class="hero__caption">
-                                    <span data-animation="fadeInUp" data-delay="0.2s">with patrick potter</span>
+                                    <!-- <span data-animation="fadeInUp" data-delay="0.2s">with patrick potter</span> -->
                                     <h1 data-animation="fadeInUp" data-delay="0.5s">Focus Hair Studio</h1>
                                 </div>
                             </div>
@@ -128,16 +163,19 @@
             </div>
             <!-- stroke Text -->
             <div class="stock-text ">
-                <h2 class="font-bold" style="-webkit-text-stroke: 0.2px white;" >Make your look Elegance</h2>
-                <h2 class="font-bold" style="color: rgb(255 255 255 / 44%); -webkit-text-stroke: 0.2px #d19f68;">Make your look Elegance</h2>
+                <h2 class="font-bold" style="-webkit-text-stroke: 0.2px white;">Make your look Elegance</h2>
+                <h2 class="font-bold" style="color: rgb(255 255 255 / 44%); -webkit-text-stroke: 0.2px #d19f68;">Make
+                    your look Elegance</h2>
             </div>
             <!-- Arrow -->
-            <div class="thumb-content-box">
-                <div class="thumb-content">
-                    <h3>Make an appointment now</h3>
-                    <a href="#"> <i class="fas fa-long-arrow-alt-right"></i></a>
+            <a href="book-appointment.html">
+                <div class="thumb-content-box " style="cursor: pointer;">
+                    <div class="thumb-content">
+                        <h3>Make an appointment now</h3>
+                        <a href="book-appointment.html"> <i class="fas fa-long-arrow-alt-right"></i></a>
+                    </div>
                 </div>
-            </div>
+            </a>
         </div>
         <!-- slider Area End -->
         <!--? About Area Start -->
@@ -231,8 +269,8 @@
         <!--? Team Start -->
         <!-- <div class="team-area pb-180">
             <div class="container"> -->
-                <!-- Section Tittle -->
-                <!-- <div class="row justify-content-center">
+        <!-- Section Tittle -->
+        <!-- <div class="row justify-content-center">
                     <div class="col-xl-8 col-lg-8 col-md-11 col-sm-11">
                         <div class="section-tittle text-center mb-100">
                             <span>Professional Teams</span>
@@ -241,8 +279,8 @@
                     </div>
                 </div>
                 <div class="row team-active dot-style"> -->
-                    <!-- single Tem -->
-                    <!-- <div class="col-xl-4 col-lg-4 col-md-6 col-sm-">
+        <!-- single Tem -->
+        <!-- <div class="col-xl-4 col-lg-4 col-md-6 col-sm-">
                         <div class="single-team mb-80 text-center">
                             <div class="team-img">
                                 <img src="assets/img/gallery/team1.png" alt="">
@@ -611,6 +649,45 @@
     </div>
 
     <!-- JS here -->
+
+    <script>
+        // Check Client Login Status
+        document.addEventListener("DOMContentLoaded", () => {
+            const client = sessionStorage.getItem("client");
+            const loginBtn = document.getElementById("client-login-btn");
+            const bookBtn = document.getElementById("book-appointment-btn");
+            const logoutBtn = document.getElementById("logout-btn");
+
+            if (client) {
+                // Client is logged in - Show Book & Logout, Hide Login
+                loginBtn.classList.add("hidden");
+                bookBtn.classList.remove("hidden");
+                logoutBtn.classList.remove("hidden");
+            } else {
+                // Not logged in - Show Login, Hide Book & Logout
+                loginBtn.classList.remove("hidden");
+                bookBtn.classList.add("hidden");
+                logoutBtn.classList.add("hidden");
+            }
+        });
+
+        // Redirect to Book Appointment or Login
+        function checkAuth() {
+            const client = sessionStorage.getItem("client");
+            if (client) {
+                window.location.href = "book-appointment.html"; // If logged in, allow booking
+            } else {
+                window.location.href = "client-login.html"; // Redirect to login if not
+            }
+        }
+
+        // Logout Function
+        function logout() {
+            sessionStorage.removeItem("client");
+            alert("Logged out successfully!");
+            window.location.href = "index.html"; // Redirect to home after logout
+        }
+    </script>
 
     <script src="./assets/js/vendor/modernizr-3.5.0.min.js"></script>
     <!-- Jquery, Popper, Bootstrap -->

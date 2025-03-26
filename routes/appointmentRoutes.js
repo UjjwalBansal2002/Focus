@@ -1,8 +1,7 @@
 const express = require("express");
 const { 
     createAppointment, 
-    getAppointments, 
-    updateAppointmentStatus // ✅ Ensure this function is imported
+    getAppointments// ✅ Ensure this function is imported
 } = require("../controllers/appointmentController");  // ✅ Make sure this path is correct
 
 const router = express.Router();

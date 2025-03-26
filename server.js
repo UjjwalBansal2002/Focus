@@ -28,6 +28,12 @@ app.get("/", (req, res) => {
     res.sendFile(path.join(__dirname, "public", "index.html"));
 });
 
+const clientRoutes = require("./routes/clientRoutes");
+app.use("/api/client", clientRoutes);
+
+
+
+
 // Root route (Redirect to login)
 
 app.get("/admin-login", (req, res) => {
