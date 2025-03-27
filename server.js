@@ -13,13 +13,13 @@ connectDB(); // Connect to MongoDB
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());  // Body parser
 app.use(cors());          // Enable CORS
-app.use(
-    session({
-        secret: "your_secret_key",
-        resave: false,
-        saveUninitialized: true,
-    })
-);
+// app.use(
+//     session({
+//         secret: "your_secret_key",
+//         resave: false,
+//         saveUninitialized: true,
+//     })
+// );
 app.use(express.static(path.join(__dirname, "public"))); // Serve static files
 
 // Routes

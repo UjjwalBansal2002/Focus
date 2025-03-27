@@ -5,7 +5,8 @@ const bookAppointmentSchema = new mongoose.Schema({
     contact: { type: String, required: true },
     service: { type: String, required: true },
     date: { type: Date, required: true },
-    time: { type: String, required: true }
+    time: { type: String, required: true },
+    
 }, { timestamps: true });
 
 module.exports = mongoose.model("appointment", bookAppointmentSchema);

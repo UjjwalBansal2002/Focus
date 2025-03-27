@@ -2,18 +2,19 @@ const express = require("express");
 const bcrypt = require("bcryptjs");
 const Client = require("../models/Client");
 const router = express.Router();
-const Appointment = require("../models/appointment");
-
+const Appointment = require("../models/appointment"); 
+const {jwtAuthMiddleware, generateToken} = require("../jwt");
 // Client Registration
 // Updated Client Registration Route
 router.post("/register", async (req, res) => {
     try {
-        const { name, email, password, contact } = req.body;
+        // console.log(req.body);
+        const { name, email, password} = req.body;
 
-        console.log( name, email, password,contact);
+        // console.log( name, email, password);
 
         // Validate input
-        if (!name || !email || !password || !contact) {
+        if (!name || !email || !password) {
             return res.status(400).json({ success: false, message: "All fields are required" });
         }
 
@@ -27,10 +28,23 @@ router.post("/register", async (req, res) => {
         const hashedPassword = await bcrypt.hash(password, 10);
 
         // Create new client
-        const newClient = new Client({ name, email, password: hashedPassword, contact });
-        await newClient.save();
+        const newClient = new Client({ name, email, password: hashedPassword});
+        console.log("newClient Data: ", newClient);
 
-        res.status(201).json({ success: true, message: "Client registered successfully" });
+
+
+        const clientData = await newClient.save();
+        console.log("Client Data: ", clientData.email);
+
+        const payload = {
+            id: clientData.id,
+            email: clientData.email
+        }
+        console.log(payload);
+        const token = generateToken(payload);
+        console.log("token: " , token);
+
+        res.status(201).json({ success: true, message: "Client registered successfully",clientData:clientData,token: token });
     } catch (error) {
         console.error("Error during registration:", error);
         res.status(500).json({ success: false, message: "Internal Server Error" });
@@ -48,9 +62,14 @@ router.post("/login", async (req, res) => {
             return res.status(401).json({ success: false, message: "Invalid credentials" });
         }
 
-        req.session.client = client._id;
+        const payload = {
+            id: client.id,
+            email: client.email
+        }
 
-        res.json({ success: true, message: "Login successful" });
+        const token = generateToken(payload);
+
+        res.json({ success: true, message: "Login successful",token: token });
     } catch (error) {
         res.status(500).json({ success: false, message: "Server error" });
     }
@@ -65,7 +84,7 @@ router.post("/logout", (req, res) => {
 // const router = express.Router();
 
 // Get Client's Appointments by Contact Number
-router.get("/appointments/:email", async (req, res) => {
+router.get("/appointments/:email",jwtAuthMiddleware, async (req, res) => {
     try {
         const { email } = req.params;
         
