@@ -4,6 +4,9 @@ const session = require("express-session");
 const path = require("path");
 const connectDB = require("./config/db");
 const cors = require("cors");
+// const {jwtAuthMiddleware, generateToken} = require("./jwt")
+// const {jwtAuthMiddleware, generateToken} = require("./jwt");
+
 
 // Initialize app
 const app = express();
@@ -24,11 +27,13 @@ app.use(express.static(path.join(__dirname, "public"))); // Serve static files
 
 // Routes
 app.use("/api/appointments", require("./routes/appointmentRoutes"));
+// router.post('/api/appointments', jwtAuthMiddleware, createAppointment);
 app.get("/", (req, res) => {
     res.sendFile(path.join(__dirname, "public", "index.html"));
 });
 
 const clientRoutes = require("./routes/clientRoutes");
+// const { jwtAuthMiddleware } = require("./jwt");
 app.use("/api/client", clientRoutes);
 
 

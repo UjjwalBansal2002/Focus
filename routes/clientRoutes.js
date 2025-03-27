@@ -42,7 +42,9 @@ router.post("/register", async (req, res) => {
         }
         console.log(payload);
         const token = generateToken(payload);
-        console.log("token: " , token);
+        // localStorage.setItem("token", token);
+
+        // console.log("token: " , token);
 
         res.status(201).json({ success: true, message: "Client registered successfully",clientData:clientData,token: token });
     } catch (error) {
@@ -84,11 +86,11 @@ router.post("/logout", (req, res) => {
 // const router = express.Router();
 
 // Get Client's Appointments by Contact Number
-router.get("/appointments/:email",jwtAuthMiddleware, async (req, res) => {
+router.get("/my-Appointments/",jwtAuthMiddleware, async (req, res) => {
     try {
-        const { email } = req.params;
+        // const { email } = req.params;
         
-        const appointments = await Appointment.find({ email }).sort({ date: -1 });
+        const appointments = await Appointment.find({clientEmail: req.clientEmail });
 
         if (!appointments.length) {
             return res.status(404).json({ message: "No appointments found for this email." });
@@ -101,7 +103,7 @@ router.get("/appointments/:email",jwtAuthMiddleware, async (req, res) => {
     }
 });
 
-module.exports = router;
+// module.exports = router;
 
 
 

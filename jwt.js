@@ -9,6 +9,9 @@ const jwtAuthMiddleware = (req, res,next) => {
         
         const decodedToken = jwt.verify(token, process.env.JWT_SECRET);
         req.user = decodedToken;
+        console.log(req.user.email);
+        // localStorage.setItem("token", data.token);
+        // req.clientEmail = decodedToken.email;
         next();
     } catch (error) {
 

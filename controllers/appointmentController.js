@@ -1,4 +1,6 @@
 const Appointment = require("../models/appointment");
+const {jwtAuthMiddleware, generateToken} = require("../jwt");
+
 
 
 // ✅ Create a new appointment
@@ -8,13 +10,18 @@ const createAppointment = async (req, res) => {
 
         // Create a new appointment with default status "Pending"
         // const pendingStatus = await Status.findOne({ name: "Pending" });
+        // console.log({ name, contact, service, date, time })
+
+        console.log(req.clientEmail)
 
         const newAppointment = new Appointment({
             name,
             contact,
             service,
             date,
+            clientEmail: req.clientEmail,
             time
+            
             // status: pendingStatus ? pendingStatus._id : null // Set default status
         });
 
