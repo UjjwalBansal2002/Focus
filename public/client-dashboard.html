@@ -15,6 +15,12 @@
         <h1 class="text-3xl font-bold mb-4">Welcome, <span id="client-name">Client</span>!</h1>
 
         <!-- Logout Button -->
+        
+        <button
+            class="bg-yellow-500 hover:bg-yellow-600 text-black font-bold py-2 px-4 rounded transition mb-8">
+            <a href="book-appointment.html"  id="book-appointment-btn" class="btn header-btn ">Book An
+                Appointment</a>
+        </button>
         <button onclick="logoutClient()"
             class="bg-yellow-500 hover:bg-yellow-600 text-black font-bold py-2 px-4 rounded transition mb-8">
             Logout
@@ -26,6 +32,9 @@
         <div id="appointment-list" class="space-y-4">
             <!-- Appointments will be dynamically inserted here -->
         </div>
+
+        <a href="#" onclick="checkAuth()" id="book-appointment-btn" class="btn header-btn hidden">Book An
+            Appointment</a>
 
     </div>
 
@@ -43,13 +52,14 @@
                 const payload = JSON.parse(atob(token.split('.')[1]));
                 document.getElementById("client-name").textContent = payload.name;
 
-                const response = await fetch("http://127.0.0.1:5000/api/appointments", {
+                const response = await fetch("http://127.0.0.1:5000/api/client/my-Appointments", {
                     method: "GET",
                     headers: { "Authorization": `Bearer ${token}` },
                 });
 
-                const { appointments } = await response.json();
-
+                const appointments = await response.json();
+                
+                console.log(appointments)
                 if (response.ok) {
                     displayAppointments(appointments);
                 } else {
@@ -73,7 +83,7 @@
                     <p><strong>Date:</strong> ${new Date(appointment.date).toLocaleDateString()}</p>
                     <p><strong>Time:</strong> ${appointment.time}</p>
                     <p><strong>Service:</strong> ${appointment.service}</p>
-                    <p><strong>Status:</strong> ${appointment.status}</p>
+                    
                 </div>
             `).join("");
         }

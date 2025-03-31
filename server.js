@@ -1,20 +1,24 @@
 require("dotenv").config();
 const express = require("express");
-const session = require("express-session");
+const app = express();
+// const session = require("express-session");
 const path = require("path");
 const connectDB = require("./config/db");
 const cors = require("cors");
+const jwt = require("jsonwebtoken");
+const cookieParser = require("cookie-parser");
+const Appointment = require("./models/appointment");
+app.use(cookieParser());
 // const {jwtAuthMiddleware, generateToken} = require("./jwt")
 // const {jwtAuthMiddleware, generateToken} = require("./jwt");
 
 
 // Initialize app
-const app = express();
 connectDB(); // Connect to MongoDB
 
 // Middleware
-app.use(express.urlencoded({ extended: true }));
 app.use(express.json());  // Body parser
+app.use(express.urlencoded({ extended: true }));
 app.use(cors());          // Enable CORS
 // app.use(
 //     session({
@@ -24,6 +28,9 @@ app.use(cors());          // Enable CORS
 //     })
 // );
 app.use(express.static(path.join(__dirname, "public"))); // Serve static files
+
+
+
 
 // Routes
 app.use("/api/appointments", require("./routes/appointmentRoutes"));
@@ -45,65 +52,61 @@ app.get("/admin-login", (req, res) => {
     res.sendFile(path.join(__dirname, "public", "admin-login.html"));
 });
 
-// Admin login credentials
+ADMIN_USERNAME = "admin";
 
-const ADMIN_USERNAME = "admin";
-const ADMIN_PASSWORD = "admin";
+ADMIN_PASSWORD = "admin";
 
-// Login API
+// 🔹 Admin Login API - Generates JWT Token
 app.post("/api/login", (req, res) => {
     const { username, password } = req.body;
 
-    
-
     if (username === ADMIN_USERNAME && password === ADMIN_PASSWORD) {
-        
+        // Generate JWT Token
+        const token = jwt.sign({ username, role: "admin" }, process.env.JWT_SECRET, { expiresIn: "1h" });
 
-        req.session.admin = true; // Set admin session
-       
-
-        
-
-        req.session.save((err) => {
-            if (err) {
-                
-                return res.status(500).json({ success: false, message: "Internal Server Error" });
-            }
-            return res.json({ success: true, message: "Login successful!" });
+        // Send token as HTTP-only cookie (More Secure)
+        res.cookie("auth_token", token, {
+            httpOnly: true, // Prevents client-side access
+            secure: true, // Set `true` in production (requires HTTPS)
+            sameSite: "Strict",
         });
+
+        return res.json({ success: true, message: "Login successful!" });
     } else {
-        
         return res.status(401).json({ success: false, message: "Invalid credentials" });
     }
 });
 
-// Logout API
-// Logout Route - Clears session and redirects
-app.post("/api/logout", (req, res) => {
-    req.session.destroy((err) => {
-        if (err) {
-            console.error("Error destroying session:", err);
-            return res.status(500).json({ success: false, message: "Logout failed" });
-        }
-        res.clearCookie("connect.sid"); // Clear session cookie for security
-        res.json({ success: true, message: "Logged out successfully!" });
-    });
-});
+// 🔹 Middleware to Verify JWT Token
+const authenticateAdmin = (req, res, next) => {
+    const token = req.cookies.auth_token;
 
-
-// Serve Admin Dashboard
-app.get("/admin-dashboard", (req, res) => {
-    if (!req.session.admin) {
-        return res.redirect("/admin-login"); // Redirect if not logged in
+    if (!token) {
+        return res.status(403).json({ success: false, message: "Unauthorized! No token provided." });
     }
+
+    try {
+        const decoded = jwt.verify(token, process.env.JWT_SECRET);
+        if (decoded.role !== "admin") {
+            return res.status(403).json({ success: false, message: "Access denied! Not an admin." });
+        }
+        req.admin = decoded;
+        next();
+    } catch (error) {
+        return res.status(401).json({ success: false, message: "Invalid or expired token." });
+    }
+};
+
+// 🔹 Protected Route - Admin Dashboard
+app.get("/admin-dashboard", authenticateAdmin, (req, res) => {
     res.sendFile(path.join(__dirname, "public", "admin-dashboard.html"));
 });
 
-// Serve Admin Login Page
-app.get("/admin-login", (req, res) => {
-    res.sendFile(path.join(__dirname, "public", "admin-login.html"));
+// 🔹 Admin Logout - Clears Token Cookie
+app.post("/api/logout", (req, res) => {
+    res.clearCookie("auth_token"); // Clear JWT token from cookies
+    res.json({ success: true, message: "Logged out successfully!" });
 });
-
 // Catch-all route for other HTML pages
 app.get("/:page", (req, res) => {
     const page = req.params.page;
@@ -116,6 +119,15 @@ app.get("/:page", (req, res) => {
         return res.sendFile(path.join(__dirname, "public", `${page}.html`));
     } else {
         res.status(404).send("Page Not Found");
+    }
+});
+
+app.get("/api/admin/appointments", authenticateAdmin, async (req, res) => {
+    try {
+        const appointments = await Appointment.find(); // Fetch all appointments
+        res.json({ success: true, appointments });
+    } catch (error) {
+        res.status(500).json({ success: false, message: "Server error", error });
     }
 });
 

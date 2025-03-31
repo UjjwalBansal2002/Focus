@@ -1,29 +1,27 @@
 const express = require("express");
 const router = express.Router();
 const Appointment = require("../models/appointment");
+const { jwtAuthMiddleware} = require("../jwt");
 
-
-
-const { jwtAuthMiddleware, generateToken } = require("../jwt");
-
-router.post('/createAppointment', jwtAuthMiddleware, async (req, res) => {
+router.post('/book', jwtAuthMiddleware, async (req, res) => {
     try {
-        const { name, contact, service, date, time } = req.body;
+        const { name, phone, service, date, time } = req.body;
 
 
         // Validate required fields
-        if (!name || !contact || !service || !date || !time) {
+        if (!name || !phone || !service || !date || !time) {
             return res.status(400).json({ success: false, message: "All fields are required" });
         }
+        console.log(name, phone, service, date, time)
 
         // Create a new appointment and store client's email from JWT
         const newAppointment = new Appointment({
             name,
-            contact,
+            phone,
             service,
             date,
             time,
-            email: req.user.email
+            clientEmail: req.user.email
         });
 
         await newAppointment.save();
@@ -34,7 +32,7 @@ router.post('/createAppointment', jwtAuthMiddleware, async (req, res) => {
     }
 });
 
-router.get('/appointments', jwtAuthMiddleware, async (req, res) => {
+router.get('/myappointments', jwtAuthMiddleware, async (req, res) => {
     try {
         const appointments = await Appointment.find({ clientEmail: req.clientEmail });
 
@@ -44,5 +42,7 @@ router.get('/appointments', jwtAuthMiddleware, async (req, res) => {
         res.status(500).json({ message: "Internal Server Error" });
     }
 });
+
+
 
 module.exports = router;

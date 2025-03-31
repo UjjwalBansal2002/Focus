@@ -64,8 +64,7 @@
 
             <div class="flex justify-between p-5 ">
 
-                <a href="" id="logoutButton"
-                    class="bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 rounded">
+                <a href="" id="logoutButton" class="bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 rounded">
                     Logout
                 </a>
             </div>
@@ -78,19 +77,26 @@
         async function fetchAppointments() {
             try {
 
-                const response = await fetch("/api/appointments");
-                const appointments = await response.json();
-                document.getElementById("totalAppointments").innerHTML = appointments.length;
-                // console.log(appointments)    
+                const response = await fetch("/api/admin/appointments", {
+                    method: "GET",
+                    credentials: "include", // Ensures cookies (auth_token) are sent
+                    headers: {
+                        "Content-Type": "application/json"
+                    }
+                });
+                // console.log(await response.json())
+                const data = await response.json();
+                document.getElementById("totalAppointments").innerHTML = data.appointments.length;
+                // console.log(data.appointments)
                 const tableBody = document.getElementById("appointmentTable");
                 tableBody.innerHTML = "";
 
-                appointments.forEach((appointment) => {
+                data.appointments.forEach((appointment) => {
                     const row = document.createElement("tr");
 
                     row.innerHTML = `
                 <td class="p-2 border border-gray-700">${appointment.name}</td>
-                <td class="p-2 border border-gray-700">${appointment.contact}</td>
+                <td class="p-2 border border-gray-700">${appointment.phone}</td>
                 <td class="p-2 border border-gray-700">${appointment.service}</td>
                 <td class="p-2 border border-gray-700">${new Date(appointment.date).toLocaleDateString()}</td>
                 <td class="p-2 border border-gray-700">${appointment.time}</td>

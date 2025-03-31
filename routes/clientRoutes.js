@@ -89,8 +89,14 @@ router.post("/logout", (req, res) => {
 router.get("/my-Appointments/",jwtAuthMiddleware, async (req, res) => {
     try {
         // const { email } = req.params;
-        
-        const appointments = await Appointment.find({clientEmail: req.clientEmail });
+        const clientEmail = req.user.email; 
+
+        if (!clientEmail) {
+            return res.status(400).json({ message: "Client email not found in token." });
+        }
+
+        const appointments = await Appointment.find({clientEmail});
+        // console.log(appointments)
 
         if (!appointments.length) {
             return res.status(404).json({ message: "No appointments found for this email." });

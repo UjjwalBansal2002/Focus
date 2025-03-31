@@ -29,8 +29,7 @@
 
 
 
-            <form id="appointmentForm" action="http://127.0.0.1:5000/api/appointments" method="POST"
-                class="bg-gray-800 p-6 rounded-lg shadow-lg">
+            <form id="appointmentForm" class="bg-gray-800 p-6 rounded-lg shadow-lg">
 
                 <div class="mb-4">
                     <label for="name" class="block text-gray-400 mb-1">Full Name</label>
@@ -41,7 +40,7 @@
 
                 <div class="mb-4">
                     <label for="phone" class="block text-gray-400 mb-1">Phone Number</label>
-                    <input type="tel" name="contact" id="phone"
+                    <input type="tel" name="phone" id="phone"
                         class="w-full p-2 rounded bg-gray-700 text-white focus:outline-none focus:ring-2 focus:ring-yellow-500"
                         placeholder="Enter your phone number" pattern="[0-9]{10}"
                         title="Enter a valid 10-digit phone number" required>
@@ -141,14 +140,23 @@
                 alert("Please fill out all fields!");
                 return;
             }
+            const token = localStorage.getItem("token");
+            // console.log(token);
+            if (!token) {
+                alert("You must be logged in to book an appointment.");
+                window.location.href = "client-login.html";
+                return;
+            }
 
             try {
                 // Send Data to Backend
-                const response = await fetch("/api/appointments", {
+                const response = await fetch("http://127.0.0.1:5000/api/appointments/book", {
                     method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({ name, contact: phone, service, date, time })
+                    headers: { "Content-Type": "application/json" ,Authorization: `Bearer ${token}`},
+                    
+                    body: JSON.stringify({ name, phone, service, date, time })
                 });
+                // console.log(response);
 
                 const result = await response.json();
 
